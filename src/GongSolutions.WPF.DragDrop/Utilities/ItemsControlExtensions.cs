@@ -573,50 +573,116 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
 
             UIElement closest = null;
             var closestDistance = double.MaxValue;
+            var itemsPresenter = GetVisualChild<ItemsPresenter>(itemsControl);
+            var itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as Panel;
 
-            foreach (var i in items)
+            if (itemsPanel is WrapPanel)
             {
-                var uiElement = i as UIElement;
+                closest = GetClosestForWrapPanel(itemsControl, items, position);
+            }
+            else
+            {
+                foreach (var i in items)
+                {
+                    var uiElement = i as UIElement;
+
+                    if (uiElement != null)
+                    {
+                        var p = uiElement.TransformToAncestor(itemsControl).Transform(new Point(0, 0));
+                        var distance = double.MaxValue;
+
+                        if (itemsControl is TreeView)
+                        {
+                            var xDiff = position.X - p.X;
+                            var yDiff = position.Y - p.Y;
+                            var hyp = Math.Sqrt(Math.Pow(xDiff, 2d) + Math.Pow(yDiff, 2d));
+                            distance = Math.Abs(hyp);
+                        }
+                        else
+                        {
+                            var itemParent = ItemsControl.ItemsControlFromItemContainer(uiElement);
+                            if (itemParent != null && itemParent != itemsControl)
+                            {
+                                searchDirection = itemParent.GetItemsPanelOrientation();
+                            }
+                            switch (searchDirection)
+                            {
+                                case Orientation.Horizontal:
+                                    distance = position.X <= p.X ? p.X - position.X : position.X - uiElement.RenderSize.Width - p.X;
+                                    break;
+                                case Orientation.Vertical:
+                                    distance = position.Y <= p.Y ? p.Y - position.Y : position.Y - uiElement.RenderSize.Height - p.Y;
+                                    break;
+                            }
+                        }
+
+                        if (distance < closestDistance)
+                        {
+                            closest = uiElement;
+                            closestDistance = distance;
+                        }
+                    }
+                }
+            }
+            
+            return closest;
+        }
+
+        private static UIElement GetClosestForWrapPanel(ItemsControl itemsControl, IEnumerable<DependencyObject> items, Point position)
+        {
+            UIElement closest = null;
+            var closestHorizontal = double.MaxValue;
+            var closestVertical = double.MaxValue;
+
+            foreach (var item in items)
+            {
+                var uiElement = item as UIElement;
 
                 if (uiElement != null)
                 {
-                    var p = uiElement.TransformToAncestor(itemsControl).Transform(new Point(0, 0));
-                    var distance = double.MaxValue;
+                    var elementPoint = uiElement.TransformToAncestor(itemsControl).Transform(new Point(0, 0));
+                    var horizontalDistance = double.MaxValue;
+                    var verticalDistance = double.MaxValue;
+                    
+                    horizontalDistance = position.X <= elementPoint.X
+                                ? elementPoint.X - position.X
+                                : position.X - uiElement.RenderSize.Width - elementPoint.X;
+                    verticalDistance = position.Y <= elementPoint.Y
+                                ? elementPoint.Y - position.Y
+                                : position.Y - uiElement.RenderSize.Height - elementPoint.Y;
 
-                    if (itemsControl is TreeView)
+                    if ((horizontalDistance + verticalDistance) < (closestHorizontal + closestVertical))
                     {
-                        var xDiff = position.X - p.X;
-                        var yDiff = position.Y - p.Y;
-                        var hyp = Math.Sqrt(Math.Pow(xDiff, 2d) + Math.Pow(yDiff, 2d));
-                        distance = Math.Abs(hyp);
-                    }
-                    else
-                    {
-                        var itemParent = ItemsControl.ItemsControlFromItemContainer(uiElement);
-                        if (itemParent != null && itemParent != itemsControl)
-                        {
-                            searchDirection = itemParent.GetItemsPanelOrientation();
-                        }
-                        switch (searchDirection)
-                        {
-                            case Orientation.Horizontal:
-                                distance = position.X <= p.X ? p.X - position.X : position.X - uiElement.RenderSize.Width - p.X;
-                                break;
-                            case Orientation.Vertical:
-                                distance = position.Y <= p.Y ? p.Y - position.Y : position.Y - uiElement.RenderSize.Height - p.Y;
-                                break;
-                        }
-                    }
-
-                    if (distance < closestDistance)
-                    {
+                        closestHorizontal = horizontalDistance;
+                        closestVertical = verticalDistance;
                         closest = uiElement;
-                        closestDistance = distance;
                     }
                 }
             }
 
             return closest;
         }
+
+        private static T GetVisualChild<T>(DependencyObject parent) where T : Visual
+        {
+            T child = default(T);
+
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < numVisuals; i++)
+            {
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                child = v as T;
+                if (child == null)
+                {
+                    child = GetVisualChild<T>(v);
+                }
+                if (child != null)
+                {
+                    break;
+                }
+            }
+            return child;
+        }
+
     }
 }

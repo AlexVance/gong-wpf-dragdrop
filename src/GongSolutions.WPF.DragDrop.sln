@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GongSolutions.WPF.DragDrop"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Showcase.WPF.DragDrop", "Showcase\Showcase.WPF.DragDrop.csproj", "{4E15F482-1FE9-4614-98F7-31256B643462}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapPanelInsertIndexIssue", "WrapPanelInsertIndexIssue\WrapPanelInsertIndexIssue.csproj", "{82067A51-D2E3-4BEE-A23B-718E5E808AC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4E15F482-1FE9-4614-98F7-31256B643462}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E15F482-1FE9-4614-98F7-31256B643462}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E15F482-1FE9-4614-98F7-31256B643462}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82067A51-D2E3-4BEE-A23B-718E5E808AC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82067A51-D2E3-4BEE-A23B-718E5E808AC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82067A51-D2E3-4BEE-A23B-718E5E808AC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82067A51-D2E3-4BEE-A23B-718E5E808AC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
