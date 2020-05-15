@@ -576,9 +576,9 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
             var itemsPresenter = GetVisualChild<ItemsPresenter>(itemsControl);
             var itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as Panel;
 
-            if (itemsPanel is WrapPanel)
+            if (itemsPanel is VirtualizingPanel)
             {
-                closest = GetClosestForWrapPanel(itemsControl, items, position);
+                closest = GetClosestForVirtualizingPanel(itemsControl, items, position);
             }
             else
             {
@@ -628,7 +628,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
             return closest;
         }
 
-        private static UIElement GetClosestForWrapPanel(ItemsControl itemsControl, IEnumerable<DependencyObject> items, Point position)
+        private static UIElement GetClosestForVirtualizingPanel(ItemsControl itemsControl, IEnumerable<DependencyObject> items, Point position)
         {
             UIElement closest = null;
             var closestHorizontal = double.MaxValue;
